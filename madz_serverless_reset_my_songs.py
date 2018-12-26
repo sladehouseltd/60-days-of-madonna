@@ -29,8 +29,8 @@ def getEndpoint():
 	#endpoint_url = "http://localhost:8000"
 	endpoint_url = "http://127.0.0.1:8000"
 
-
 	return(endpoint_url)
+
 
 def setUpDB(region, endpoint=''):
 
@@ -43,7 +43,8 @@ def setUpDB(region, endpoint=''):
 
 	return(dynamodb)
 
-def getMyDayCount(user):
+
+def resetMySongs(user):
 
 # variables
 
@@ -55,36 +56,19 @@ def getMyDayCount(user):
 
 	dynamodb = setUpDB(region, endpoint)
 
-	dayCount = getItem(table, region, user, endpoint)['Item']['dayCount']
+	table = dynamodb.Table(table)
 
-	print("get my day count succeeded:")
+	response = table.delete_item(
+		Key={
+			'userID': user,
+		}
+	)
 
-	return(str(dayCount))
+	print(json.dumps(response, indent=4, cls=DecimalEncoder))
 
-def getItem(table, region, userID, endpoint = ''):
+	print("Reset my songs succeeded:")
 
-    if(endpoint):
-        dynamodb = boto3.resource('dynamodb', region_name=region, endpoint_url=endpoint)
-    else:
-        dynamodb = boto3.resource('dynamodb', region_name=region)
-
-    table = dynamodb.Table(table)
-
-    try:
-        response = table.get_item(
-            Key={
-                'userID': userID
-            }
-        )
-    except ClientError as e:
-        print(e.response['Error']['Message'])
-    else:
-        item = response['Item']
-        #print("GetItem succeeded:")
-        #print(json.dumps(item, indent=4, cls=DecimalEncoder))
-
-    return(response)
 
 # test
 
-print(getMyDayCount("richardx14-20181226v1"))
+resetMySongs("richardx14-20181226v1")

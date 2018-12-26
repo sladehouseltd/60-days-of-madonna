@@ -62,4 +62,4 @@ def createNewUser (user):
 
 # test
 
-# createNewUser("richardx14-20181226v1")
+createNewUser("richardx14-20181226v1")

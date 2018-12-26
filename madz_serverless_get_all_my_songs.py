@@ -89,4 +89,4 @@ def getItem(table, region, userID, endpoint = ''):
     
 # test
 
-# getAllMySongs("richardx14-20181226v1")
+getAllMySongs("richardx14-20181226v1")
