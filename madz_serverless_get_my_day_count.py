@@ -32,7 +32,6 @@ def getEndpoint():
 
 	return(endpoint_url)
 
-
 def setUpDB(region, endpoint=''):
 
 	endpoint = getEndpoint()
@@ -44,24 +43,23 @@ def setUpDB(region, endpoint=''):
 
 	return(dynamodb)
 
-def getAllMySongs(user):
+def getMyDayCount(user):
 
 # variables
 
 	region = "eu-west-2"
 	table = "previousSongs"
 	endpoint = getEndpoint()
-	
+
 	#userID = "richardx14-1" # need to look this up in future
 
 	dynamodb = setUpDB(region, endpoint)
 
-	allMySongs = getItem(table, region, user, endpoint)['Item']['songSoFar']
+	dayCount = getItem(table, region, user, endpoint)['Item']['dayCount']
 
-	print("get all my songs succeeded:")
+	print("get my day count succeeded:")
 
-	return(allMySongs)
-
+	return(str(dayCount))
 
 def getItem(table, region, userID, endpoint = ''):
 
@@ -82,11 +80,15 @@ def getItem(table, region, userID, endpoint = ''):
         print(e.response['Error']['Message'])
     else:
         item = response['Item']
-        print("GetItem succeeded:")
-        print(json.dumps(item, indent=4, cls=DecimalEncoder))
+        #print("GetItem succeeded:")
+        #print(json.dumps(item, indent=4, cls=DecimalEncoder))
 
     return(response)
-    
+
 # test
 
-# getAllMySongs("richardx14-20181226v1")
+print(getMyDayCount("richardx14-20181226v1"))
+
+
+
+    
