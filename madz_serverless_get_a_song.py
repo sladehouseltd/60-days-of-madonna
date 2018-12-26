@@ -151,7 +151,6 @@ def getASong(user):
 	songSoFar = getItem(table, region, user, endpoint)['Item']['songSoFar']
 
 	for song in songSoFar:
-		print("Songs so far " + song)
 		songList.remove(song)
 
 	if songList:
@@ -216,7 +215,7 @@ def addASong(user, song):
 			}
 		)
 
-	print("addASong succeeded:")
+	#print("addASong succeeded:")
 
 def getItem(table, region, userID, endpoint = ''):
 
@@ -237,9 +236,11 @@ def getItem(table, region, userID, endpoint = ''):
         print(e.response['Error']['Message'])
     else:
         item = response['Item']
-        print("GetItem succeeded:")
-        print(json.dumps(item, indent=4, cls=DecimalEncoder))
+        #print("GetItem succeeded:")
+        #print(json.dumps(item, indent=4, cls=DecimalEncoder))
 
     return(response)
+
+# test
 
 getASong("richardx14-20181226v1")

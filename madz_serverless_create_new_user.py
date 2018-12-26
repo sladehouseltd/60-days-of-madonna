@@ -60,4 +60,6 @@ def createNewUser (user):
 
 	return(response)
 
-createNewUser("richardx14-20181226v1")
+# test
+
+# createNewUser("richardx14-20181226v1")
