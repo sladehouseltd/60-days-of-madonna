@@ -19,7 +19,7 @@ def getEndpoint():
 
 	endpoint_url = ''
 	#endpoint_url = "http://localhost:8000"
-	endpoint_url = "http://127.0.0.1:8000"
+	#endpoint_url = "http://127.0.0.1:8000"
 
 	return(endpoint_url)
 
