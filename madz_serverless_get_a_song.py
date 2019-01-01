@@ -243,4 +243,5 @@ def getItem(table, region, userID, endpoint = ''):
 
 # test
 
-getASong("richardx14-20181226v1")
+getASong("richardx14-20190101")
+getASong("richardx14-1")

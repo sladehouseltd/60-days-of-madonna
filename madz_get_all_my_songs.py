@@ -58,34 +58,34 @@ def getItem(table, region, userID, endpoint = ''):
 
     return(response)
 
-def getMyDayCount(user):
+def getAllMySongs(user):
 
 # variables
 
-	region = "eu-west-2"
-	table = "previousSongs"
-	endpoint = getEndpoint()
+    region = "eu-west-2"
+    table = "previousSongs"
+    endpoint = getEndpoint()
+    
+    dynamodb = setUpDB(region, endpoint)
 
-	dynamodb = setUpDB(region, endpoint)
+    allMySongs = getItem(table, region, user, endpoint)['Item']['songSoFar']
 
-	dayCount = getItem(table, region, user, endpoint)['Item']['dayCount']
+    print("get all my songs succeeded:")
 
-	print("get my day count succeeded:")
-
-	return(str(dayCount))
+    return(allMySongs)
 
 def lambda_handler(event, context):
 
     print("In lambda handler")
 
-    dayCount = getMyDayCount(event['user'])
+    mySongs = getAllMySongs(event['user'])
     
     resp = {
         "statusCode": 200,
         "headers": {
             "Access-Control-Allow-Origin": "*",
         },
-        "body": dayCount
+        "body": mySongs
     }
     
     return resp
@@ -93,7 +93,7 @@ def lambda_handler(event, context):
 # print(getMyDayCount("richardx14-20181226v1"))
 
 testEvent = {
-				'user': "richardx14-20190101"
+				'user': "richardx14-20181226v1"
 			}
 
 resp = (lambda_handler(testEvent,context="context"))

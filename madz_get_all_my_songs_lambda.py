@@ -18,8 +18,8 @@ class DecimalEncoder(json.JSONEncoder):
 def getEndpoint():
 
 	endpoint_url = ''
-	#endpoint_url = "http://localhost:8000"
-	endpoint_url = "http://127.0.0.1:8000"
+	endpoint_url = "http://localhost:8000"
+	#endpoint_url = "http://127.0.0.1:8000"
 
 	return(endpoint_url)
 
@@ -43,6 +43,8 @@ def getItem(table, region, userID, endpoint = ''):
 
     table = dynamodb.Table(table)
 
+    print(table)
+
     try:
         response = table.get_item(
             Key={
@@ -53,39 +55,39 @@ def getItem(table, region, userID, endpoint = ''):
         print(e.response['Error']['Message'])
     else:
         item = response['Item']
-        #print("GetItem succeeded:")
+        print("GetItem succeeded:")
         #print(json.dumps(item, indent=4, cls=DecimalEncoder))
 
     return(response)
 
-def getMyDayCount(user):
+def getAllMySongs(user):
 
 # variables
 
-	region = "eu-west-2"
-	table = "previousSongs"
-	endpoint = getEndpoint()
+    region = "eu-west-2"
+    table = "previousSongs"
+    endpoint = getEndpoint()
+    
+    dynamodb = setUpDB(region, endpoint)
 
-	dynamodb = setUpDB(region, endpoint)
+    allMySongs = getItem(table, region, user, endpoint)['Item']['songSoFar']
 
-	dayCount = getItem(table, region, user, endpoint)['Item']['dayCount']
+    print("get all my songs succeeded:")
 
-	print("get my day count succeeded:")
-
-	return(str(dayCount))
+    return(allMySongs)
 
 def lambda_handler(event, context):
 
     print("In lambda handler")
 
-    dayCount = getMyDayCount(event['user'])
+    mySongs = getAllMySongs(event['user'])
     
     resp = {
         "statusCode": 200,
         "headers": {
             "Access-Control-Allow-Origin": "*",
         },
-        "body": dayCount
+        "body": mySongs
     }
     
     return resp
