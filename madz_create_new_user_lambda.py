@@ -17,7 +17,7 @@ class DecimalEncoder(json.JSONEncoder):
 
 def getEndpoint():
 
-	#endpoint_url = ''
+	endpoint_url = ''
 	#endpoint_url = "http://localhost:8000"
 	endpoint_url = "http://127.0.0.1:8000"
 
@@ -53,13 +53,12 @@ def getItem(table, region, userID, endpoint = ''):
         print(e.response['Error']['Message'])
     else:
         item = response['Item']
-        print("GetItem succeeded:")
-        print(json.dumps(item, indent=4, cls=DecimalEncoder))
+        #print("GetItem succeeded:")
+        #print(json.dumps(item, indent=4, cls=DecimalEncoder))
 
     return(response)
 
-
-def addASong(user, song):
+def createNewUser (user):
 
 # variables
 
@@ -67,36 +66,59 @@ def addASong(user, song):
 	table = "previousSongs"
 	endpoint = getEndpoint()
 
-	#userID = "richardx14-1" # need to look this up in future
+	#user = "richardx14-2" # need to look this up in future
 
 	dynamodb = setUpDB(region, endpoint)
-
-	# sort out songs
-
-	songs = getItem(table, region, user, endpoint)['Item']['songSoFar']
-
-	songs.append(song)
-
-	# sort out dayCount
-
-	dayCount = getItem(table, region, user, endpoint)['Item']['dayCount'] + 1
-
-	# now put item back
 
 	table = dynamodb.Table(table)
 
 	response = table.put_item(
 		Item={
 			'userID': user,
-			'dayCount': dayCount,
-			'songSoFar': songs
+			'dayCount': 0,
+			'songSoFar': []
 			}
 		)
 
-	print("addASong succeeded:")
+	print("Create user " + user + " succeeded.")
+
+	return(response)
+
+
+def lambda_handler(event, context):
+
+    print("In lambda handler")
+
+    dayCount = createNewUser(event['user'])
+    
+    resp = {
+        "statusCode": 200,
+        "headers": {
+            "Access-Control-Allow-Origin": "*",
+        },
+        "body": dayCount
+    }
+    
+    return resp
+
+# print(getMyDayCount("richardx14-20181226v1"))
+
+testEvent = {
+				'user': "richardx14-20190101"
+			}
+
+resp = (lambda_handler(testEvent,context="context"))
+
+print(resp['body'])
+
 
 # test
 
-addASong("richardx14-1","Vogue")
+testEvent = {
+				'user': "richardx14-20190101-2"
+			}
 
+resp = (lambda_handler(testEvent,context="context"))
+
+print(resp['body'])
 

@@ -1,3 +1,4 @@
+
 from __future__ import print_function # Python 2/3 compatibility
 from random import randint
 import boto3
@@ -17,8 +18,7 @@ class DecimalEncoder(json.JSONEncoder):
 
 def getEndpoint():
 
-	#endpoint_url = ''
-	#endpoint_url = "http://localhost:8000"
+	endpoint_url = ''
 	endpoint_url = "http://127.0.0.1:8000"
 
 	return(endpoint_url)
@@ -34,7 +34,8 @@ def setUpDB(region, endpoint=''):
 
 	return(dynamodb)
 
-def createNewUser (user):
+
+def resetMySongs(user):
 
 # variables
 
@@ -42,24 +43,44 @@ def createNewUser (user):
 	table = "previousSongs"
 	endpoint = getEndpoint()
 
-	#user = "richardx14-2" # need to look this up in future
-
 	dynamodb = setUpDB(region, endpoint)
 
 	table = dynamodb.Table(table)
 
-	response = table.put_item(
-		Item={
+	response = table.delete_item(
+		Key={
 			'userID': user,
-			'dayCount': 0,
-			'songSoFar': []
+		}
+	)
+
+	print(json.dumps(response, indent=4, cls=DecimalEncoder))
+
+	print("Reset my songs succeeded:")
+
+def lambda_handler(event, context):
+
+    print("In lambda handler")
+
+    resetMySongs(event['user'])
+    
+    respMessage = "User " + event['user'] + " reset"
+
+    resp = {
+        "statusCode": 200,
+        "headers": {
+            "Access-Control-Allow-Origin": "*",
+        },
+        "body": respMessage
+    }
+    
+    return resp
+
+# print(getMyDayCount("richardx14-20181226v1"))
+
+testEvent = {
+				'user': "richardx14-20190101sdasda"
 			}
-		)
 
-	print("Create user " + user + " succeeded.")
+resp = (lambda_handler(testEvent,context="context"))
 
-	return(response)
-
-# test
-
-
+print(resp['body'])
