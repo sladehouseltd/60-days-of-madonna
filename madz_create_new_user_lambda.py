@@ -89,14 +89,14 @@ def lambda_handler(event, context):
 
     print("In lambda handler")
 
-    dayCount = createNewUser(event['user'])
+    newUser = createNewUser(event['user'])
     
     resp = {
         "statusCode": 200,
         "headers": {
             "Access-Control-Allow-Origin": "*",
         },
-        "body": dayCount
+        "body": newUser
     }
     
     return resp
@@ -104,7 +104,7 @@ def lambda_handler(event, context):
 # print(getMyDayCount("richardx14-20181226v1"))
 
 testEvent = {
-				'user': "richardx14-20190101"
+				'user': "richardx14-20190101v2"
 			}
 
 resp = (lambda_handler(testEvent,context="context"))
@@ -115,7 +115,7 @@ print(resp['body'])
 # test
 
 testEvent = {
-				'user': "richardx14-20190101-2"
+				'user': "richardx14-20190101-2v4"
 			}
 
 resp = (lambda_handler(testEvent,context="context"))
