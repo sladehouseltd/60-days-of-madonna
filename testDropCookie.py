@@ -23,6 +23,8 @@ def lambda_handler(event, context):
 
     #cookieString = "myCookie=t81e70kke29; domain=my.domain; expires=Wed, 01 Jan 2020 20:41:27 GMT;"
 
+    # REALLY IMPORTANT - CHANGE DOMAIN NAME BELOW BEFORE USING
+
     cookieString = "myCookie=" + cookie + "; domain=my.domain; expires=Wed, 01 Jan 2020 20:41:27 GMT;"
 
     resp = {
