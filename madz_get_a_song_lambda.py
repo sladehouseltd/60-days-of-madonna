@@ -235,27 +235,34 @@ def lambda_handler(event, context):
 
     print("In lambda handler")
 
-    newSong = getASong(event['user'])
+    cookie = event['cookie']
+    
+    print(cookie)
+
+    userCookie = (cookie.split('=')[1])
+
+    print(userCookie)
+
+    newSong = getASong(userCookie)
 
     resp = {
         "statusCode": 200,
         "headers": {
             "Access-Control-Allow-Origin": "*",
         },
-        "body": newSong
+        "body": newSong,
+        "userCookie": userCookie
+
     }
     
     return resp
 
-# print(getMyDayCount("richardx14-20181226v1"))
-
 testEvent = {
-				'user': "richardx14-20190101-2v4"
-			}
+                'user': "richardx14-1",
+                'cookie': "; Cookie=richardx14-1"
+            }
 
 resp = (lambda_handler(testEvent,context="context"))
 
-print(resp)
-
-
+print(resp['body'])
 

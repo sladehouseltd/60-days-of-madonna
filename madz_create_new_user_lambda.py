@@ -5,6 +5,13 @@ import json
 import decimal
 from boto3.dynamodb.conditions import Key, Attr
 from botocore.exceptions import ClientError
+import string, random
+
+# https://aws.amazon.com/blogs/compute/simply-serverless-using-aws-lambda-to-expose-custom-cookies-with-api-gateway/
+
+def id_generator(size=11, chars=string.ascii_uppercase + string.digits):
+    
+    return ''.join(random.choice(chars) for _ in range(size))
 
 class DecimalEncoder(json.JSONEncoder):
     def default(self, o):
@@ -53,20 +60,14 @@ def getItem(table, region, userID, endpoint = ''):
         print(e.response['Error']['Message'])
     else:
         item = response['Item']
-        #print("GetItem succeeded:")
-        #print(json.dumps(item, indent=4, cls=DecimalEncoder))
 
     return(response)
 
 def createNewUser (user):
 
-# variables
-
 	region = "eu-west-2"
 	table = "previousSongs"
 	endpoint = getEndpoint()
-
-	#user = "richardx14-2" # need to look this up in future
 
 	dynamodb = setUpDB(region, endpoint)
 
@@ -89,36 +90,31 @@ def lambda_handler(event, context):
 
     print("In lambda handler")
 
-    newUser = createNewUser(event['user'])
+    cookie = id_generator().lower()
+
+    print(cookie)
+
+    newUser = createNewUser(cookie)
     
+    cookieString = "madzCookie=" + cookie + "; domain=8wb6c682uc.execute-api.eu-west-2.amazonaws.com; expires=Wed, 01 Jan 2020 20:41:27 GMT;"
+
     resp = {
         "statusCode": 200,
         "headers": {
             "Access-Control-Allow-Origin": "*",
         },
-        "body": newUser
+        "Cookie": cookieString,
+        "body": cookieString
     }
     
     return resp
 
-# print(getMyDayCount("richardx14-20181226v1"))
 
 testEvent = {
-				'user': "richardx14-20190101v2"
+				'user': "richardx14-1",
+                'cookie': "; Cookie=richardx14-1"
 			}
 
 resp = (lambda_handler(testEvent,context="context"))
 
 print(resp['body'])
-
-
-# test
-
-testEvent = {
-				'user': "richardx14-20190101-2v"
-			}
-
-resp = (lambda_handler(testEvent,context="context"))
-
-print(resp['body'])
-

@@ -78,7 +78,15 @@ def lambda_handler(event, context):
 
     print("In lambda handler")
 
-    dayCount = getMyDayCount(event['user'])
+    cookie = event['cookie']
+    
+    print(cookie)
+
+    userCookie = (cookie.split('=')[1])
+
+    print(userCookie)
+
+    dayCount = getMyDayCount(userCookie)
     
     resp = {
         "statusCode": 200,
