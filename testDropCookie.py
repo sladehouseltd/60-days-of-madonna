@@ -25,7 +25,7 @@ def lambda_handler(event, context):
 
     # REALLY IMPORTANT - CHANGE DOMAIN NAME BELOW BEFORE USING
 
-    cookieString = "myCookie=" + cookie + "; domain=my.domain; expires=Wed, 01 Jan 2020 20:41:27 GMT;"
+    cookieString = "myCookie=" + cookie + "; domain=8wb6c682uc.execute-api.eu-west-2.amazonaws.com; expires=Wed, 01 Jan 2020 20:41:27 GMT;"
 
     resp = {
         "statusCode": 200,
