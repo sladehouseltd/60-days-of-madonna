@@ -115,7 +115,7 @@ print(resp['body'])
 # test
 
 testEvent = {
-				'user': "richardx14-20190101-2v4"
+				'user': "richardx14-20190101-2v"
 			}
 
 resp = (lambda_handler(testEvent,context="context"))

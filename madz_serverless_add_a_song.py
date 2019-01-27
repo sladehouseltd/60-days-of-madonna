@@ -6,8 +6,6 @@ import decimal
 from boto3.dynamodb.conditions import Key, Attr
 from botocore.exceptions import ClientError
 
-# https://faragta.com/aws-api-gateway/pass-cookie-values-from-api-gateway.html
-
 class DecimalEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, decimal.Decimal):
@@ -19,7 +17,7 @@ class DecimalEncoder(json.JSONEncoder):
 
 def getEndpoint():
 
-	endpoint_url = ''
+	#endpoint_url = ''
 	#endpoint_url = "http://localhost:8000"
 	endpoint_url = "http://127.0.0.1:8000"
 
@@ -45,8 +43,6 @@ def getItem(table, region, userID, endpoint = ''):
 
     table = dynamodb.Table(table)
 
-    print(table)
-
     try:
         response = table.get_item(
             Key={
@@ -58,56 +54,49 @@ def getItem(table, region, userID, endpoint = ''):
     else:
         item = response['Item']
         print("GetItem succeeded:")
-        #print(json.dumps(item, indent=4, cls=DecimalEncoder))
+        print(json.dumps(item, indent=4, cls=DecimalEncoder))
 
     return(response)
 
-def getAllMySongs(user):
+
+def addASong(user, song):
 
 # variables
 
-    region = "eu-west-2"
-    table = "previousSongs"
-    endpoint = getEndpoint()
-    
-    dynamodb = setUpDB(region, endpoint)
+	region = "eu-west-2"
+	table = "previousSongs"
+	endpoint = getEndpoint()
 
-    allMySongs = getItem(table, region, user, endpoint)['Item']['songSoFar']
+	#userID = "richardx14-1" # need to look this up in future
 
-    print("get all my songs succeeded:")
+	dynamodb = setUpDB(region, endpoint)
 
-    return(allMySongs)
+	# sort out songs
 
-def lambda_handler(event, context):
+	songs = getItem(table, region, user, endpoint)['Item']['songSoFar']
 
-    print("In lambda handler")
+	songs.append(song)
 
-    cookie = event['cookie']
-    
-    print(cookie)
+	# sort out dayCount
 
-    userCookie = (cookie.split('=')[1])
+	dayCount = getItem(table, region, user, endpoint)['Item']['dayCount'] + 1
 
-    print(userCookie)
+	# now put item back
 
-    mySongs = getAllMySongs(userCookie)
-    
-    resp = {
-        "statusCode": 200,
-        "headers": {
-            "Access-Control-Allow-Origin": "*",
-        },
-        "body": mySongs,
-        "userCookie": userCookie
-    }
-    
-    return resp
+	table = dynamodb.Table(table)
 
-testEvent = {
-				'user': "richardx14-1",
-                'cookie': "; Cookie=richardx14-1"
+	response = table.put_item(
+		Item={
+			'userID': user,
+			'dayCount': dayCount,
+			'songSoFar': songs
 			}
+		)
 
-resp = (lambda_handler(testEvent,context="context"))
+	print("addASong succeeded:")
 
-print(resp['body'])
+# test
+
+addASong("richardx14-1","Vogue")
+
+

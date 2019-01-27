@@ -1,0 +1,4 @@
+{
+    "user" : "$input.params('user')",
+    "cookie" : "$util.escapeJavaScript($input.params().header.Cookie)"
+}
