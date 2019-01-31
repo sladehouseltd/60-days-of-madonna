@@ -5,6 +5,11 @@ import json
 import decimal
 from boto3.dynamodb.conditions import Key, Attr
 from botocore.exceptions import ClientError
+import string, random
+
+def id_generator(size=11, chars=string.ascii_uppercase + string.digits):
+    
+    return ''.join(random.choice(chars) for _ in range(size))
 
 class DecimalEncoder(json.JSONEncoder):
     def default(self, o):
@@ -231,20 +236,57 @@ def getItem(table, region, userID, endpoint = ''):
     return(response)
 
 
+def createNewUser():
+
+    cookie = id_generator().lower()
+
+    print(cookie)
+
+    region = "eu-west-2"
+    table = "previousSongs"
+    endpoint = getEndpoint()
+
+    dynamodb = setUpDB(region, endpoint)
+
+    table = dynamodb.Table(table)
+
+    response = table.put_item(
+        Item={
+            'userID': cookie,
+            'dayCount': 0,
+            'songSoFar': []
+            }
+        )
+
+    return(cookie)
+
 def lambda_handler(event, context):
 
     print("In lambda handler")
 
-    cookie = event['cookie']
-    
-    print(cookie)
+    # If no cookie at all create user cookie.
+    # If cookie blank, create user cookie.
 
-    userCookie = (cookie.split('=')[1])
+
+
+    if ('cookie' not in event):
+        print("didn't find cookie key in event")
+        userCookie = createNewUser()
+
+    elif (not event['cookie']):
+        print("found cookie but null")
+        userCookie = createNewUser()
+
+    else:
+        print("found cookie")
+        cookie = event['cookie']
+        userCookie = (cookie.split('=')[1]) # can improve this by checking for split
+
 
     print(userCookie)
 
     newSong = getASong(userCookie)
-
+    
     resp = {
         "statusCode": 200,
         "headers": {
@@ -252,7 +294,6 @@ def lambda_handler(event, context):
         },
         "body": newSong,
         "userCookie": userCookie
-
     }
     
     return resp
@@ -260,6 +301,8 @@ def lambda_handler(event, context):
 testEvent = {
                 'user': "richardx14-1",
                 'cookie': "; Cookie=richardx14-1"
+                #'cookie': "richardx14-1"
+
             }
 
 resp = (lambda_handler(testEvent,context="context"))
