@@ -148,8 +148,6 @@ def getASong(user):
 
     endpoint = getEndpoint()
 
-    #userID = "richardx14-1" # need to look this up in future
-
     dynamodb = setUpDB(region, endpoint)
 
     songList = createSongList()
@@ -182,8 +180,6 @@ def addASongToSongsSoFar(user, song):
     region = "eu-west-2"
     table = "previousSongs"
     endpoint = getEndpoint()
-
-    #userID = "richardx14-1" # need to look this up in future
 
     dynamodb = setUpDB(region, endpoint)
 
@@ -238,9 +234,14 @@ def getItem(table, region, userID, endpoint = ''):
 
 def createNewUser():
 
+    print("Creating new user from within get_a_song")
     cookie = id_generator().lower()
 
     print(cookie)
+
+    #cookieString = "madzCookie=" + cookie + "; domain=8wb6c682uc.execute-api.eu-west-2.amazonaws.com; expires=Wed, 01 Jan 2020 20:41:27 GMT;"
+
+    #print(cookieString)
 
     region = "eu-west-2"
     table = "previousSongs"
@@ -249,6 +250,8 @@ def createNewUser():
     dynamodb = setUpDB(region, endpoint)
 
     table = dynamodb.Table(table)
+
+    print("up to here")
 
     response = table.put_item(
         Item={
@@ -267,23 +270,28 @@ def lambda_handler(event, context):
     # If no cookie at all create user cookie.
     # If cookie blank, create user cookie.
 
-
-
     if ('cookie' not in event):
         print("didn't find cookie key in event")
         userCookie = createNewUser()
+        userCookieString = "madzCookie=" + userCookie + "; domain=8wb6c682uc.execute-api.eu-west-2.amazonaws.com; expires=Wed, 01 Jan 2020 20:41:27 GMT;"
 
     elif (not event['cookie']):
         print("found cookie but null")
         userCookie = createNewUser()
+        userCookieString = "madzCookie=" + userCookie + "; domain=8wb6c682uc.execute-api.eu-west-2.amazonaws.com; expires=Wed, 01 Jan 2020 20:41:27 GMT;"
 
     else:
-        print("found cookie")
-        cookie = event['cookie']
-        userCookie = (cookie.split('=')[1]) # can improve this by checking for split
+        print("found cookie = " + event['cookie'])
+        userCookie = event['cookie']
+        userCookieString = "madzCookie=" + userCookie + "; domain=8wb6c682uc.execute-api.eu-west-2.amazonaws.com; expires=Wed, 01 Jan 2020 20:41:27 GMT;"
 
 
-    print(userCookie)
+    if "=" in userCookie:
+        userCookie = (userCookie.split('=')[1]) # can improve this by checking for split
+    #else:
+    #    userCookie = userCookieString
+
+    print("userCookie = " + userCookie)
 
     newSong = getASong(userCookie)
     
@@ -293,10 +301,13 @@ def lambda_handler(event, context):
             "Access-Control-Allow-Origin": "*",
         },
         "body": newSong,
-        "userCookie": userCookie
+        "userCookie": userCookie,
+        "Cookie": userCookieString
     }
     
     return resp
+
+####################
 
 testEvent = {
                 'user': "richardx14-1",
@@ -305,7 +316,45 @@ testEvent = {
 
             }
 
+
 resp = (lambda_handler(testEvent,context="context"))
 
-print(resp['body'])
+print(resp)
+
+print()
+
+testEvent = {
+                'user': "richardx14-1",
+                'cookie': "richardx14-1"
+                #'cookie': "richardx14-1"
+
+            }
+
+resp = (lambda_handler(testEvent,context="context"))
+
+print(resp)
+print()
+
+testEvent = {
+                'user': "richardx14-1",
+                'cookie': ""
+                #'cookie': "richardx14-1"
+
+            }
+
+resp = (lambda_handler(testEvent,context="context"))
+
+print(resp)
+
+print()
+
+testEvent = {
+                'user': "richardx14-1"
+                #'cookie': "richardx14-1"
+
+            }
+
+resp = (lambda_handler(testEvent,context="context"))
+
+print(resp)
 
