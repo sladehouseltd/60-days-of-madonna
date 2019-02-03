@@ -271,30 +271,11 @@ def lambda_handler(event, context):
     # If cookie blank, create user cookie.
 
     userCookie = "richardx14-1"
-    userCookieString = "madzCookie=richardx14-1; domain=8wb6c682uc.execute-api.eu-west-2.amazonaws.com; expires=Wed, 19 Apr 2020 20:41:27 GMT;"
+    userCookieString = "madzCookie=richardx14-1-2; domain=8wb6c682uc.execute-api.eu-west-2.amazonaws.com; expires=Wed, 19 Apr 2020 20:41:27 GMT;"
+    receivedUserCookie = event['cookie']
 
-#    if ('cookie' not in event):
-#        print("didn't find cookie key in event")
-#        userCookie = createNewUser()
-#        userCookieString = "madzCookie=" + userCookie + "; domain=8wb6c682uc.execute-api.eu-west-2.amazonaws.com; expires=Wed, 01 Jan 2020 20:41:27 GMT;"
-
-#    elif (not event['cookie']):
-#        print("found cookie but null")
-#        userCookie = createNewUser()
-#        userCookieString = "madzCookie=" + userCookie + "; domain=8wb6c682uc.execute-api.eu-west-2.amazonaws.com; expires=Wed, 01 Jan 2020 20:41:27 GMT;"
-
- #   else:
- #       print("found cookie = " + event['cookie'])
- #       userCookie = event['cookie']
- #       userCookieString = "madzCookie=" + userCookie + "; domain=8wb6c682uc.execute-api.eu-west-2.amazonaws.com; expires=Wed, 01 Jan 2020 20:41:27 GMT;"
-
-
- #   if "=" in userCookie:
- #       userCookie = (userCookie.split('=')[1]) # can improve this by checking for split
-    #else:
-    #    userCookie = userCookieString
-
-#    print("userCookie = " + userCookie)
+    if receivedUserCookie == '':
+        receivedUserCookie = "No cookie received"
 
     newSong = getASong(userCookie)
     
@@ -304,7 +285,8 @@ def lambda_handler(event, context):
             "Access-Control-Allow-Origin": "*",
         },
         "body": newSong,
-        "userCookie": userCookie,
+        "droppedUserCookie": userCookie,
+        "receivedUserCookie": receivedUserCookie,
         "Cookie": userCookieString
     }
     
