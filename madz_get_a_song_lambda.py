@@ -232,16 +232,9 @@ def getItem(table, region, userID, endpoint = ''):
     return(response)
 
 
-def createNewUser():
+def createNewUser(user):
 
-    print("Creating new user from within get_a_song")
-    userCookie = id_generator().lower()
-
-    print(userCookie)
-
-    #cookieString = "madzCookie=" + cookie + "; domain=8wb6c682uc.execute-api.eu-west-2.amazonaws.com; expires=Wed, 01 Jan 2020 20:41:27 GMT;"
-
-    #print(cookieString)
+    print("Creating new user " + user + " in get_a_song")
 
     region = "eu-west-2"
     table = "previousSongs"
@@ -251,17 +244,13 @@ def createNewUser():
 
     table = dynamodb.Table(table)
 
-    print("up to here")
-
     response = table.put_item(
         Item={
-            'userID': userCookie,
+            'userID': user,
             'dayCount': 0,
             'songSoFar': []
             }
         )
-
-    return(userCookie)
 
 def lambda_handler(event, context):
 
@@ -270,12 +259,20 @@ def lambda_handler(event, context):
     # If no cookie at all create user cookie.
     # If cookie blank, create user cookie.
 
-    userCookie = "richardx14-1"
-    userCookieString = "madzCookie=richardx14-1-2; domain=8wb6c682uc.execute-api.eu-west-2.amazonaws.com; expires=Wed, 19 Apr 2020 20:41:27 GMT;"
+    #userCookie = "richardx14-1"
+    #userCookieString = "madzCookie=richardx14-1-2; domain=8wb6c682uc.execute-api.eu-west-2.amazonaws.com; expires=Wed, 19 Apr 2020 20:41:27 GMT;"
     receivedUserCookie = event['cookie']
 
     if receivedUserCookie == '':
-        receivedUserCookie = "No cookie received"
+        receivedUserCookie = "No cookie received, creating cookie and user"
+        userCookie = id_generator().lower()
+        createNewUser(userCookie)
+        userCookieString = "madzCookie=" + userCookie +"; domain=8wb6c682uc.execute-api.eu-west-2.amazonaws.com; expires=Wed, 19 Apr 2020 20:41:27 GMT;"
+    else:
+        userCookie = receivedUserCookie.replace('=',';')
+        userCookie = userCookie.split(';')[1]
+        userCookieString = "madzCookie=" + userCookie +"; domain=8wb6c682uc.execute-api.eu-west-2.amazonaws.com; expires=Wed, 19 Apr 2020 20:41:27 GMT;"
+        print(userCookie)
 
     newSong = getASong(userCookie)
     
@@ -294,9 +291,26 @@ def lambda_handler(event, context):
 
 ####################
 
+# cookie found
+
 testEvent = {
                 'user': "richardx14-1",
-                'cookie': "; Cookie=richardx14-1"
+                'cookie': "madzCookie=richardx14-1; domain=8wb6c682uc.execute-api.eu-west-2.amazonaws.com; expires=Wed, 19 Apr 2020 20:41:27 GMT;"
+
+                #'cookie': "richardx14-1"
+            }
+
+#resp = (lambda_handler(testEvent,context="context"))
+
+#print(resp)
+
+print()
+
+# cookie not found
+
+testEvent = {
+                'user': "richardx14-1",
+                'cookie': "madzCookie=richardx14-1; madzCookie3=richard0003; madzCookie2=richard0002"
                 #'cookie': "richardx14-1"
             }
 
@@ -304,8 +318,7 @@ resp = (lambda_handler(testEvent,context="context"))
 
 print(resp)
 
-print()
-
+#print()
 #testEvent = {
 #                'user': "richardx14-1",
 #                'cookie': "richardx14-1"
