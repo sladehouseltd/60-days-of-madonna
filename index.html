@@ -12,20 +12,21 @@
 			if (xhr.status == 200) {
 
 				// alert(xhr.responseText) ;
-				//document.write(xhr.responseText) ;
+				document.write(xhr.responseText) ;
 
 				var response = JSON.parse(xhr.responseText) ; 
 
 				var song = response["body"] ;
 
-				document.write(song) ;
+				//document.write(song) ;
 
 				}
 			}
 		}
 
-	xhr.open("get","https://8wb6c682uc.execute-api.eu-west-2.amazonaws.com/prod/madz_get_a_song",true);
-	//xhr.withCredentials = true;
+	xhr.open("get","https://api.60daysofmadonna.com/prod/madz_get_a_song",true) ;
+	//xhr.open("get","https://8wb6c682uc.execute-api.eu-west-2.amazonaws.com/prod/madz_get_a_song",true);
+	xhr.withCredentials = true;
 	xhr.send(null);
 
 	// var newSong ;
