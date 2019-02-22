@@ -49,7 +49,11 @@
 
 					var song = response["song"] ;
 
+					var songsSoFar = response["allSongsForUser"]
+
 					document.getElementById("newSong").innerHTML = song;
+
+					document.getElementById("songsSoFar").innerHTML = songsSoFar;
 
 
 					//document.write(song) ;
@@ -105,31 +109,23 @@
 				
 				<p>A song a day, for 60 days in celebration of Madonna's 60th birthday.</p>
 
-				<p></p>
+			</div>
+
+			<div class="split-bio">
 
 				<p>Your song for today is:  <span id="newSong"></span></p>
 
 			</div>
 
-			<div class="split-lists">
-				
-				<div class="split-list">
+			<div class="split-bio">
 
-					<h3>Connect</h3>
+				<p>Your previous songs are:  <span id="songsSoFar"></span></p>
 
-					<ul>
-						<li><a href="#">Blog</a></li>
-						<li><a href="#">Email</a></li>
-						<li><a href="#">Newsletter</a></li>
-					</ul>
-
-				</div>
-				
-			</div>
+			</div>			
 
 			<div class="split-credit">
 
-				<p>&copy;2017 <a href="#">Your Name</a> - <a href="https://onepagelove.com/split">Split Template</a> by <a href="https://onepagelove.com">One Page Love</a></p>
+				<p>&copy;2017 <a href="#">blueharvest.co.uk</a> - <a href="https://onepagelove.com/split">Split Template</a> by <a href="https://onepagelove.com">One Page Love</a></p>
 
 				<!-- 
 				To edit this credit you can remove the CC3.0 license for only $5 here: https://onepagelove.com/split 

@@ -92,7 +92,6 @@ def createSongList():
     "Fever",
     "Fighting Spirit",
     "Forbidden Love",
-    "Forbidden Love",
     "Freedom",
     "Frozen",
     "Future Lovers",
@@ -173,11 +172,9 @@ def createSongList():
     "Lo Que Siente La Mujer",
     "The Look of Love",
     "Love Don't Live Here Anymore",
-    "Love Don't Live Here Anymore",
     "Love Makes the World Go Round",
     "Love Profusion",
     "Love Song",
-    "Love Spent",
     "Love Spent",
     "Love Tried to Welcome Me",
     "Lucky Star",
@@ -195,7 +192,6 @@ def createSongList():
     "Nobody's Perfect",
     "Nothing Fails",
     "Nothing Really Matters",
-    "Now I'm Following You",
     "Now I'm Following You",
     "Oh Father",
     "Oh What a Circus",
@@ -423,9 +419,16 @@ def getAllSongsForUser(user):
 
     allSongsForUser = getItem(table, region, user, endpoint)['Item']['songSoFar']
 
+    allSongsForUserString = ""
+    
+    for song in allSongsForUser:
+        allSongsForUserString = allSongsForUserString + song + ", "
+
+    allSongsForUserString = allSongsForUserString[:-2] # strip off final comma and space
+
     print("get all my songs succeeded:")
 
-    return(allSongsForUser)
+    return(allSongsForUserString)
 
 
 def lambda_handler(event, context):
@@ -452,10 +455,10 @@ def lambda_handler(event, context):
         userCookieString = "madzCookie=" + userCookie +"; domain=60daysofmadonna.com; expires=Wed, 19 Apr 2020 20:41:27 GMT;"
         print(userCookie)
 
-    newSong = getASong(userCookie)
-
     allSongsForUser = getAllSongsForUser(userCookie)
     
+    newSong = getASong(userCookie)
+
     resp = {
         "statusCode": 200,
         "headers": {
