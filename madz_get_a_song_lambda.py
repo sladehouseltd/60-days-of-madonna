@@ -413,6 +413,21 @@ def createNewUser(user):
             }
         )
 
+def getAllSongsForUser(user):
+
+    region = "eu-west-2"
+    table = "previousSongs"
+    endpoint = getEndpoint()
+    
+    dynamodb = setUpDB(region, endpoint)
+
+    allSongsForUser = getItem(table, region, user, endpoint)['Item']['songSoFar']
+
+    print("get all my songs succeeded:")
+
+    return(allSongsForUser)
+
+
 def lambda_handler(event, context):
 
     print("In lambda handler")
@@ -438,13 +453,16 @@ def lambda_handler(event, context):
         print(userCookie)
 
     newSong = getASong(userCookie)
+
+    allSongsForUser = getAllSongsForUser(userCookie)
     
     resp = {
         "statusCode": 200,
         "headers": {
             "Access-Control-Allow-Origin": "*",
         },
-        "body": newSong,
+        "song": newSong,
+        "allSongsForUser": allSongsForUser,
         "droppedUserCookie": userCookie,
         "receivedUserCookie": receivedUserCookie,
         "Cookie": userCookieString
@@ -461,5 +479,9 @@ testEvent = {
 
 resp = (lambda_handler(testEvent,context="context"))
 
-print(resp['body'])
+
+print(resp['song'])
+
+print(resp['allSongsForUser'])
+
 
