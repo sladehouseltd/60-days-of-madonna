@@ -1,0 +1,51 @@
+<link rel="shortcut icon" href="#" />
+<p>60 Days of Madonna - Get a Song</p>
+<script type="text/javascript">
+
+	function getasong () {
+	
+		var xhr = new XMLHttpRequest() ;
+		xhr.onreadystatechange = function() {
+
+		if (xhr.readyState === 4) {
+
+			if (xhr.status == 200) {
+
+				// alert(xhr.responseText) ;
+				document.write(xhr.responseText) ;
+
+				var response = JSON.parse(xhr.responseText) ; 
+
+				var song = response["body"] ;
+
+				//document.write(song) ;
+
+				}
+			}
+		}
+
+	xhr.open("get","https://api.60daysofmadonna.com/prod/madz_get_a_song",true) ;
+	//xhr.open("get","https://8wb6c682uc.execute-api.eu-west-2.amazonaws.com/prod/madz_get_a_song",true);
+	xhr.withCredentials = true;
+	xhr.send(null);
+
+	// var newSong ;
+
+	// document.write(newSong);
+
+	} 
+
+</script>
+
+<script type="text/javascript">
+	
+	getasong() ;
+
+</script>
+
+<p><img src="https://s3.eu-west-2.amazonaws.com/60daysofmadonna.com/madonna_mood_board.jpg" alt="" width="1536" height="1152" /></p>
+
+body {
+ background-image: url("paper.gif");
+ background-color: #cccccc;
+}

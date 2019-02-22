@@ -1,41 +1,79 @@
-<link rel="shortcut icon" href="#" />
-<p>60 Days of Madonna - Get a Song</p>
-<script type="text/javascript">
+<!DOCTYPE html>
+<html lang="en-US">
 
-	function getasong () {
+<head>
+
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	
-		var xhr = new XMLHttpRequest() ;
-		xhr.onreadystatechange = function() {
+	<!-- SEO -->
+	<title>60 Days of Madonna</title>
+	<meta name="description" content="Split is a centrally-divided layout for a professional online presence with a big image or video left with alongside content." />
+	<meta name="robots" content="index, follow" />
+	<meta name="referrer" content="always" />
 
-		if (xhr.readyState === 4) {
+	<!-- Social & Open Graph -->
+	<meta property="og:title" content="Split - HTML Template Demo" />
+	<meta property="og:description" content="Split is a centrally-divided layout for a professional online presence with a big image or video left with alongside content." />
+	<meta property="og:image" content="https://demo.onepagelove.com/fullsingle-html/split/images/social.jpg"> <!-- include your hosted image full URL -->
+	<meta property="og:url" content="https://demo.onepagelove.com/fullsingle-html/split/" />
+	<meta name="twitter:title" content="Split - HTML Template Demo" >
+	<meta name="twitter:description" content="Split is a centrally-divided layout for a professional online presence with a big image or video left with alongside content." />
+	<meta name="twitter:image" content="https://demo.onepagelove.com/fullsingle-html/split/images/social.jpg" /> <!-- include your hosted image full URL -->
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:site" content="@onepagelove" />
+	<meta name="twitter:creator" content="@robhope" />
 
-			if (xhr.status == 200) {
+	<!-- Favicon -->
+	<link rel="icon" type="image/png" href="images/favicon.png" sizes="32x32">
 
-				// alert(xhr.responseText) ;
-				document.write(xhr.responseText) ;
+	<!-- Styles -->
+	<link rel='stylesheet' href='assets/css/split.css' type='text/css' media='screen' />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
 
-				var response = JSON.parse(xhr.responseText) ; 
+	<script type="text/javascript">
 
-				var song = response["body"] ;
+		function getasong () {
+		
+			var xhr = new XMLHttpRequest() ;
+			xhr.onreadystatechange = function() {
 
-				//document.write(song) ;
+			if (xhr.readyState === 4) {
 
+				if (xhr.status == 200) {
+
+					//alert(xhr.responseText) ;
+					//document.write(xhr.responseText) ;
+
+					var response = JSON.parse(xhr.responseText) ; 
+
+					var song = response["song"] ;
+
+					document.getElementById("newSong").innerHTML = song;
+
+
+					//document.write(song) ;
+
+					}
 				}
 			}
-		}
 
-	xhr.open("get","https://api.60daysofmadonna.com/prod/madz_get_a_song",true) ;
-	//xhr.open("get","https://8wb6c682uc.execute-api.eu-west-2.amazonaws.com/prod/madz_get_a_song",true);
-	xhr.withCredentials = true;
-	xhr.send(null);
+		xhr.open("get","https://api.60daysofmadonna.com/prod/madz_get_a_song",true) ;
+		//xhr.open("get","https://8wb6c682uc.execute-api.eu-west-2.amazonaws.com/prod/madz_get_a_song",true);
+		xhr.withCredentials = true;
+		xhr.send(null);
 
-	// var newSong ;
+		// var newSong ;
 
-	// document.write(newSong);
+		// document.write(newSong);
 
-	} 
+		} 
 
-</script>
+	</script>
+
+</head>
+
+<body id="fullsingle" class="page-template-page-fullsingle-split">
 
 <script type="text/javascript">
 	
@@ -43,9 +81,69 @@
 
 </script>
 
-<p><img src="https://s3.eu-west-2.amazonaws.com/60daysofmadonna.com/madonna_mood_board.jpg" alt="" width="1536" height="1152" /></p>
+<div class="fs-split">
 
-body {
- background-image: url("paper.gif");
- background-color: #cccccc;
-}
+	<!-- Image Side -->
+	<div class="split-image">
+
+	</div>
+
+	<!-- Content Side -->
+	<div class="split-content">
+
+		<div class="split-content-vertically-center">
+		
+			<div class="split-intro">
+				
+				<h1>Madonna</h1>
+
+				<span class="tagline">60 Days of Madonna</span>
+
+			</div>
+
+			<div class="split-bio">
+				
+				<p>A song a day, for 60 days in celebration of Madonna's 60th birthday.</p>
+
+				<p></p>
+
+				<p>Your song for today is:  <span id="newSong"></span></p>
+
+			</div>
+
+			<div class="split-lists">
+				
+				<div class="split-list">
+
+					<h3>Connect</h3>
+
+					<ul>
+						<li><a href="#">Blog</a></li>
+						<li><a href="#">Email</a></li>
+						<li><a href="#">Newsletter</a></li>
+					</ul>
+
+				</div>
+				
+			</div>
+
+			<div class="split-credit">
+
+				<p>&copy;2017 <a href="#">Your Name</a> - <a href="https://onepagelove.com/split">Split Template</a> by <a href="https://onepagelove.com">One Page Love</a></p>
+
+				<!-- 
+				To edit this credit you can remove the CC3.0 license for only $5 here: https://onepagelove.com/split 
+				this really helps contribute towards us developing more templates and means the world to me!
+				Cheers, Rob (@robhope)
+				-->
+
+			</div>		
+
+		</div>
+
+	</div>
+
+</div>
+
+</body>
+</html>
