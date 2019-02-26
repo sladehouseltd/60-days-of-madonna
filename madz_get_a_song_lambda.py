@@ -7,6 +7,11 @@ from boto3.dynamodb.conditions import Key, Attr
 from botocore.exceptions import ClientError
 import string, random
 
+maxDayCount = 8
+
+globalRegion = "eu-west-2"
+globalTable = "previousSongs"
+
 def id_generator(size=11, chars=string.ascii_uppercase + string.digits):
     
     return ''.join(random.choice(chars) for _ in range(size))
@@ -311,24 +316,25 @@ def getASong(user):
 
     songSoFar = getItem(table, region, user, endpoint)['Item']['songSoFar']
 
+    dayCount = getItem(table, region, user, endpoint)['Item']['dayCount']
+
     for song in songSoFar:
         songList.remove(song)
 
-    if songList:
-        foo2 = randint(0,len(songList)-1 )
-        songOfTheDay = songList[foo2]
-        print("Song of the day is " + songOfTheDay + ".")
+    #if songList:
 
-        # write to db.
+    foo2 = randint(0,len(songList)-1 )
+    songOfTheDay = songList[foo2]
+    print("Song of the day is " + songOfTheDay + ".")
 
-        addASongToSongsSoFar(user, songOfTheDay)
+    # write to db.
 
-        #putItem("madonnaSongs", "eu-west-2", "richardx14-3", "http://localhost:8000")
+    addASongToSongsSoFar(user, songOfTheDay)
         
-        return(songOfTheDay)
+    return(songOfTheDay)
 
-    else:
-        return ("Madonna has run out of songs!")
+    #else:
+    #    return ("Madonna has run out of songs!")
 
 def addASongToSongsSoFar(user, song):
 
@@ -362,8 +368,6 @@ def addASongToSongsSoFar(user, song):
             }
         )
 
-    #print("addASong succeeded:")
-
 def getItem(table, region, userID, endpoint = ''):
 
     if(endpoint):
@@ -383,7 +387,7 @@ def getItem(table, region, userID, endpoint = ''):
         print(e.response['Error']['Message'])
     else:
         item = response['Item']
-        #print("GetItem succeeded:")
+
         #print(json.dumps(item, indent=4, cls=DecimalEncoder))
 
     return(response)
@@ -430,6 +434,20 @@ def getAllSongsForUser(user):
 
     return(allSongsForUserString)
 
+def getDayCount(user):
+
+    #globalRegion = "eu-west-2"
+    #globalTable = "previousSongs"
+
+    endpoint = getEndpoint()
+    
+    dynamodb = setUpDB(globalRegion, endpoint)
+
+    dayCount = getItem(globalTable, globalRegion, user, endpoint)['Item']['dayCount']
+
+    print("getDayCount count = "+  str(dayCount))
+
+    return(dayCount)
 
 def lambda_handler(event, context):
 
@@ -437,18 +455,20 @@ def lambda_handler(event, context):
 
     # If no cookie at all create user cookie.
     # If cookie blank, create user cookie.
-
-    #userCookie = "richardx14-1"
-    #userCookieString = "madzCookie=richardx14-1-2; domain=8wb6c682uc.execute-api.eu-west-2.amazonaws.com; expires=Wed, 19 Apr 2020 20:41:27 GMT;"
+    
     receivedUserCookie = event['cookie']
+
     print("received user cookie: " + receivedUserCookie)
 
     if receivedUserCookie == '':
+
         receivedUserCookie = "No cookie received, creating cookie and user"
         userCookie = id_generator().lower()
         createNewUser(userCookie)
         userCookieString = "madzCookie=" + userCookie +"; domain=60daysofmadonna.com; expires=Wed, 19 Apr 2020 20:41:27 GMT;"
+    
     else:
+
         userCookie = receivedUserCookie.replace('=',';')
         userCookie = userCookie.split(';')[1]
         userCookie = userCookie.lstrip()
@@ -457,7 +477,13 @@ def lambda_handler(event, context):
 
     allSongsForUser = getAllSongsForUser(userCookie)
     
-    newSong = getASong(userCookie)
+    if getDayCount(userCookie) < maxDayCount:
+
+        newSong = getASong(userCookie)
+
+    else:
+
+        newSong = "You now have all " + str(maxDayCount) + " songs!"
 
     resp = {
         "statusCode": 200,
@@ -477,7 +503,7 @@ def lambda_handler(event, context):
 
 testEvent = {
                 'user': "richardx14-1",
-                'cookie': "; ucx68bwst6b"
+                'cookie': "; p9m5ptd1dr5"
             }
 
 resp = (lambda_handler(testEvent,context="context"))
