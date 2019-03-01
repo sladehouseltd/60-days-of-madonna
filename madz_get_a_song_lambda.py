@@ -7,10 +7,13 @@ from boto3.dynamodb.conditions import Key, Attr
 from botocore.exceptions import ClientError
 import string, random
 
-maxDayCount = 8
+maxDayCount = 60
 
 globalRegion = "eu-west-2"
 globalTable = "previousSongs"
+
+globalEndpoint_url = ''
+globalEndpoint_url = "http://127.0.0.1:8000"
 
 def id_generator(size=11, chars=string.ascii_uppercase + string.digits):
     
@@ -292,10 +295,10 @@ def getEndpoint():
 
 def setUpDB(region, endpoint=''):
 
-    endpoint = getEndpoint()
+    #endpoint = getEndpoint()
 
-    if(endpoint):
-        dynamodb = boto3.resource('dynamodb', region_name=region, endpoint_url=endpoint)
+    if(globalEndpoint_url):
+        dynamodb = boto3.resource('dynamodb', region_name=region, endpoint_url=globalEndpoint_url)
     else:
         dynamodb = boto3.resource('dynamodb', region_name=region)
 
@@ -305,18 +308,18 @@ def getASong(user):
 
     print("Getting a song.")
 
-    region = "eu-west-2"
-    table = "previousSongs"
+    #region = "eu-west-2"
+    #table = "previousSongs"
 
-    endpoint = getEndpoint()
+    #endpoint = getEndpoint()
 
-    dynamodb = setUpDB(region, endpoint)
+    dynamodb = setUpDB(globalRegion, globalTable)
 
     songList = createSongList()
 
-    songSoFar = getItem(table, region, user, endpoint)['Item']['songSoFar']
+    songSoFar = getItem(globalTable, globalRegion, user, globalEndpoint_url)['Item']['songSoFar']
 
-    dayCount = getItem(table, region, user, endpoint)['Item']['dayCount']
+    dayCount = getItem(globalTable, globalRegion, user, globalEndpoint_url)['Item']['dayCount']
 
     for song in songSoFar:
         songList.remove(song)
@@ -338,27 +341,25 @@ def getASong(user):
 
 def addASongToSongsSoFar(user, song):
 
-# variables
+    #region = "eu-west-2"
+    #table = "previousSongs"
+    #endpoint = getEndpoint()
 
-    region = "eu-west-2"
-    table = "previousSongs"
-    endpoint = getEndpoint()
-
-    dynamodb = setUpDB(region, endpoint)
+    dynamodb = setUpDB(globalRegion, globalEndpoint_url)
 
     # sort out songs
 
-    songs = getItem(table, region, user, endpoint)['Item']['songSoFar']
+    songs = getItem(globalTable, globalRegion, user, globalEndpoint_url)['Item']['songSoFar']
 
     songs.append(song)
 
     # sort out dayCount
 
-    dayCount = getItem(table, region, user, endpoint)['Item']['dayCount'] + 1
+    dayCount = getItem(globalTable, globalRegion, user, globalEndpoint_url)['Item']['dayCount'] + 1
 
     # now put item back
 
-    table = dynamodb.Table(table)
+    table = dynamodb.Table(globalTable)
 
     response = table.put_item(
         Item={
@@ -397,13 +398,13 @@ def createNewUser(user):
 
     print("Creating new user " + user + " in get_a_song")
 
-    region = "eu-west-2"
-    table = "previousSongs"
-    endpoint = getEndpoint()
+    #region = "eu-west-2"
+    #table = "previousSongs"
+    #endpoint = getEndpoint()
 
-    dynamodb = setUpDB(region, endpoint)
+    dynamodb = setUpDB(globalRegion, globalEndpoint_url)
 
-    table = dynamodb.Table(table)
+    table = dynamodb.Table(globalTable)
 
     response = table.put_item(
         Item={
@@ -415,13 +416,13 @@ def createNewUser(user):
 
 def getAllSongsForUser(user):
 
-    region = "eu-west-2"
-    table = "previousSongs"
-    endpoint = getEndpoint()
+    #region = "eu-west-2"
+    #table = "previousSongs"
+    #endpoint = getEndpoint()
     
-    dynamodb = setUpDB(region, endpoint)
+    dynamodb = setUpDB(globalRegion, globalEndpoint_url)
 
-    allSongsForUser = getItem(table, region, user, endpoint)['Item']['songSoFar']
+    allSongsForUser = getItem(globalTable, globalRegion, user, globalEndpoint_url)['Item']['songSoFar']
 
     allSongsForUserString = ""
     
@@ -439,13 +440,13 @@ def getDayCount(user):
     #globalRegion = "eu-west-2"
     #globalTable = "previousSongs"
 
-    endpoint = getEndpoint()
+    #endpoint = getEndpoint()
     
-    dynamodb = setUpDB(globalRegion, endpoint)
+    dynamodb = setUpDB(globalRegion, globalEndpoint_url)
 
-    dayCount = getItem(globalTable, globalRegion, user, endpoint)['Item']['dayCount']
+    dayCount = getItem(globalTable, globalRegion, user, globalEndpoint_url)['Item']['dayCount']
 
-    print("getDayCount count = "+  str(dayCount))
+    #print("getDayCount count = "+  str(dayCount))
 
     return(dayCount)
 
@@ -453,6 +454,8 @@ def lambda_handler(event, context):
 
     print("In lambda handler")
 
+    if maxDayCount !=60:
+        print("WARNING!!! maxDayCount is set to " + maxDayCount)
     # If no cookie at all create user cookie.
     # If cookie blank, create user cookie.
     
