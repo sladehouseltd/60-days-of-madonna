@@ -6,6 +6,7 @@ import decimal
 from boto3.dynamodb.conditions import Key, Attr
 from botocore.exceptions import ClientError
 import string, random
+import os
 
 maxDayCount = 60
 
@@ -13,7 +14,7 @@ globalRegion = "eu-west-2"
 globalTable = "previousSongs"
 
 globalEndpoint_url = ''
-globalEndpoint_url = "http://127.0.0.1:8000"
+#globalEndpoint_url = "http://127.0.0.1:8000"
 
 def id_generator(size=11, chars=string.ascii_uppercase + string.digits):
     
@@ -453,6 +454,17 @@ def getDayCount(user):
 def lambda_handler(event, context):
 
     print("In lambda handler")
+
+    endpoint = os.getenv("ENV")
+
+    global globalEndpoint_url
+
+    if endpoint == "aws":
+        globalEndpoint_url = ''
+        print("Running in AWS")
+    else:
+        globalEndpoint_url = "http://127.0.0.1:8000"
+        print("Running locally")
 
     if maxDayCount !=60:
         print("WARNING!!! maxDayCount is set to " + maxDayCount)
