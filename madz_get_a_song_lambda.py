@@ -329,6 +329,8 @@ def getASong(user):
 
     dayCount = globalUserItem['Item']['dayCount'] + 1
 
+    globalUserItem['Item']['dayCount'] +=1
+
     songSoFar.append(songOfTheDay)
 
     table = globalDynamodb.Table(globalTable)
@@ -336,7 +338,7 @@ def getASong(user):
     response = table.put_item(
         Item={
             'userID': user,
-            'dayCount': dayCount,
+            'dayCount': globalUserItem['Item']['dayCount'],
             'songSoFar': songSoFar
             }
         )
@@ -397,7 +399,7 @@ def lambda_handler(event, context):
 
     print("In lambda handler")
 
-    if maxDayCount !=60:
+    if maxDayCount != 60:
         print("WARNING!!! maxDayCount is set to " + str(maxDayCount) )
 
     setUpDB(globalRegion)
@@ -417,7 +419,7 @@ def lambda_handler(event, context):
         userCookie = receivedUserCookie.replace('=',';')
         userCookie = userCookie.split(';')[1]
         userCookie = userCookie.lstrip()
-        print(userCookie)
+        #print(userCookie)
 
     userCookieString = "madzCookie=" + userCookie +"; domain=60daysofmadonna.com; expires=Wed, 19 Apr 2020 20:41:27 GMT;"
 
@@ -442,6 +444,7 @@ def lambda_handler(event, context):
         },
         "song": newSong,
         "allSongsForUser": allSongsForUser,
+        "dayCount": globalUserItem['Item']['dayCount'], 
         "droppedUserCookie": userCookie,
         "receivedUserCookie": receivedUserCookie,
         "Cookie": userCookieString
@@ -462,6 +465,8 @@ resp = (lambda_handler(testEvent,context="context"))
 print(resp['song'])
 
 print(resp['allSongsForUser'])
+
+print(resp['dayCount'])
 
 #                'cookie': "; p9m5ptd1dr5"
 
