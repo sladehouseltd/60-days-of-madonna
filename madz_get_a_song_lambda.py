@@ -8,7 +8,7 @@ from botocore.exceptions import ClientError
 import string, random
 import os
 
-maxDayCount = 500
+maxDayCount = 60
 
 globalRegion = "eu-west-2"
 globalTable = "previousSongs"
@@ -27,6 +27,27 @@ class DecimalEncoder(json.JSONEncoder):
             else:
                 return int(o)
         return super(DecimalEncoder, self).default(o)
+
+def setUpDB(region, endpoint=''):
+
+    global globalDynamodb
+
+    global globalEndpoint_url
+
+    endpoint = os.getenv("ENV")
+
+    if endpoint == "aws":
+        globalEndpoint_url = ''
+        print("Running in AWS")
+    else:
+        globalEndpoint_url = "http://127.0.0.1:8000"
+        print("Running locally")
+
+    if(globalEndpoint_url):
+        globalDynamodb = boto3.resource('dynamodb', region_name=region, endpoint_url=globalEndpoint_url)
+    else:
+        globalDynamodb = boto3.resource('dynamodb', region_name=region)
+
 
 def createSongList():
 
@@ -286,57 +307,18 @@ def createSongList():
 
     return(songs)
 
-def setUpDB(region, endpoint=''):
 
-    #endpoint = getEndpoint()
-
-    #print(dynamodb)
-
-    global globalDynamodb
-
-    endpoint = os.getenv("ENV")
-
-    global globalEndpoint_url
-
-    if endpoint == "aws":
-        globalEndpoint_url = ''
-        print("Running in AWS")
-    else:
-        globalEndpoint_url = "http://127.0.0.1:8000"
-        print("Running locally")
-
-    if(globalEndpoint_url):
-        globalDynamodb = boto3.resource('dynamodb', region_name=region, endpoint_url=globalEndpoint_url)
-    else:
-        globalDynamodb = boto3.resource('dynamodb', region_name=region)
-    
-    #globalDynamodb = setUpDB(globalRegion, globalEndpoint_url)
-
-    #globalDynamodb = dynamodb
-
-    #eturn(globalDynamodb)
 
 
 def getASong(user):
 
     print("Getting a song.")
 
-    #region = "eu-west-2"
-    #table = "previousSongs"
-
-    #endpoint = getEndpoint()
-
-    #dynamodb = setUpDB(globalRegion, globalTable)
-
-    songList = createSongList()
-
-    #songSoFar = getItem(globalTable, globalRegion, user, globalEndpoint_url)['Item']['songSoFar']
-
     songSoFar = globalUserItem['Item']['songSoFar']
 
-    #dayCount = getItem(globalTable, globalRegion, user, globalEndpoint_url)['Item']['dayCount']
-
     dayCount = globalUserItem['Item']['dayCount']
+
+    songList = createSongList()
 
     for song in songSoFar:
         songList.remove(song)
@@ -345,31 +327,9 @@ def getASong(user):
     songOfTheDay = songList[foo2]
     print("Song of the day is " + songOfTheDay + ".")
 
-    # write to db.
-
-    addASongToSongsSoFar(user, songOfTheDay)
-        
-    return(songOfTheDay)
-
-def addASongToSongsSoFar(user, song):
-
-    #dynamodb = setUpDB(globalRegion, globalEndpoint_url)
-
-    # sort out songs
-
-    #songs = getItem(globalTable, globalRegion, user, globalEndpoint_url)['Item']['songSoFar']
-
-    songs = globalUserItem['Item']['songSoFar']
-
-    songs.append(song)
-
-    # sort out dayCount
-
-    #dayCount = getItem(globalTable, globalRegion, user, globalEndpoint_url)['Item']['dayCount'] + 1
-
     dayCount = globalUserItem['Item']['dayCount'] + 1
 
-    # now put item back
+    songSoFar.append(songOfTheDay)
 
     table = globalDynamodb.Table(globalTable)
 
@@ -377,13 +337,13 @@ def addASongToSongsSoFar(user, song):
         Item={
             'userID': user,
             'dayCount': dayCount,
-            'songSoFar': songs
+            'songSoFar': songSoFar
             }
         )
+        
+    return(songOfTheDay)
 
 def getItem(table, region, userID, endpoint = ''):
-
-    #dynamodb = setUpDB(globalRegion, globalEndpoint_url)
 
     table = globalDynamodb.Table(globalTable)
 
@@ -400,10 +360,6 @@ def getItem(table, region, userID, endpoint = ''):
 
         #print(json.dumps(item, indent=4, cls=DecimalEncoder))
 
-    global globalUserItem
-
-    globalUserItem = response
-
     return(response)
 
 
@@ -411,13 +367,7 @@ def createNewUser(user):
 
     print("Creating new user " + user + " in get_a_song")
 
-    #region = "eu-west-2"
-    #table = "previousSongs"
-    #endpoint = getEndpoint()
-
-    #dynamodb = setUpDB(globalRegion, globalEndpoint_url)
-
-    table = dynamodb.Table(globalTable)
+    table = globalDynamodb.Table(globalTable)
 
     response = table.put_item(
         Item={
@@ -427,17 +377,7 @@ def createNewUser(user):
             }
         )
 
-def getAllSongsForUser(user):
-
-    #region = "eu-west-2"
-    #table = "previousSongs"
-    #endpoint = getEndpoint()
-    
-    #dynamodb = setUpDB(globalRegion, globalEndpoint_url)
-
-    #allSongsForUser = getItem(globalTable, globalRegion, user, globalEndpoint_url)['Item']['songSoFar']
-
-    # or
+def formatAllSongsForUserString():
 
     allSongsForUser = globalUserItem['Item']['songSoFar']
 
@@ -452,24 +392,6 @@ def getAllSongsForUser(user):
 
     return(allSongsForUserString)
 
-def getDayCount(user):
-
-    #globalRegion = "eu-west-2"
-    #globalTable = "previousSongs"
-
-    #endpoint = getEndpoint()
-    
-    #dynamodb = setUpDB(globalRegion, globalEndpoint_url)
-
-    #dayCount = getItem(globalTable, globalRegion, user, globalEndpoint_url)['Item']['dayCount']
-
-    dayCount = globalUserItem['Item']['dayCount']
-
-    print(dayCount)
-
-    #print("getDayCount count = "+  str(dayCount))
-
-    return(dayCount)
 
 def lambda_handler(event, context):
 
@@ -478,6 +400,7 @@ def lambda_handler(event, context):
     if maxDayCount !=60:
         print("WARNING!!! maxDayCount is set to " + str(maxDayCount) )
 
+    setUpDB(globalRegion)
 
     receivedUserCookie = event['cookie']
 
@@ -500,13 +423,11 @@ def lambda_handler(event, context):
 
     global globalUserItem
 
-    setUpDB(globalRegion)
-
     globalUserItem = getItem(globalTable, globalRegion, userCookie, globalEndpoint_url)
 
-    allSongsForUser = getAllSongsForUser(userCookie)
+    allSongsForUser = formatAllSongsForUserString()
 
-    if getDayCount(userCookie) < maxDayCount:
+    if globalUserItem['Item']['dayCount'] < maxDayCount:
 
         newSong = getASong(userCookie)
 
@@ -532,7 +453,7 @@ def lambda_handler(event, context):
 
 testEvent = {
                 'user': "richardx14-1",
-                'cookie': "; p9m5ptd1dr5"
+                'cookie': "; kx1q0n64ytq"
             }
 
 resp = (lambda_handler(testEvent,context="context"))
@@ -542,4 +463,5 @@ print(resp['song'])
 
 print(resp['allSongsForUser'])
 
+#                'cookie': "; p9m5ptd1dr5"
 
