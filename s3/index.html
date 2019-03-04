@@ -51,13 +51,17 @@
 
 					var songsSoFar = response["allSongsForUser"]
 
-					var dayCount = response["dayCount"]
+					var currentDayCount = response["dayCount"]
 
-					document.getElementById("newSong").innerHTML = song;
+					var oldDayCount = currentDayCount - 1 ;
 
-					document.getElementById("songsSoFar").innerHTML = songsSoFar;
+					document.getElementById("newSong").innerHTML = song ;
+ 
+					document.getElementById("songsSoFar").innerHTML = songsSoFar ;
 
-					document.getElementById("dayCount").innerHTML = dayCount ;
+					document.getElementById("currentDayCount").innerHTML = currentDayCount ;
+
+					document.getElementById("oldDayCount").innerHTML = oldDayCount ;
 
 
 					//document.write(song) ;

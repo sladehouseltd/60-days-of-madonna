@@ -356,7 +356,9 @@ def getItem(table, region, userID, endpoint = ''):
             }
         )
     except ClientError as e:
+        print("Cookie supplied but not found.")
         print(e.response['Error']['Message'])
+
     else:
         item = response['Item']
 
@@ -425,7 +427,12 @@ def lambda_handler(event, context):
 
     global globalUserItem
 
-    globalUserItem = getItem(globalTable, globalRegion, userCookie, globalEndpoint_url)
+    try:
+        globalUserItem = getItem(globalTable, globalRegion, userCookie, globalEndpoint_url)
+    except:
+        print("Received cookie, but user not found.  Creating new user with received cookie.")
+        createNewUser(userCookie)
+        globalUserItem = getItem(globalTable, globalRegion, userCookie, globalEndpoint_url)
 
     allSongsForUser = formatAllSongsForUserString()
 
@@ -456,7 +463,7 @@ def lambda_handler(event, context):
 
 testEvent = {
                 'user': "richardx14-1",
-                'cookie': "; kx1q0n64ytq"
+                'cookie': "; kx1q0n64ytq2"
             }
 
 resp = (lambda_handler(testEvent,context="context"))
