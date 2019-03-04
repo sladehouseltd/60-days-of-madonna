@@ -51,9 +51,13 @@
 
 					var songsSoFar = response["allSongsForUser"]
 
+					var dayCount = response["dayCount"]
+
 					document.getElementById("newSong").innerHTML = song;
 
 					document.getElementById("songsSoFar").innerHTML = songsSoFar;
+
+					document.getElementById("dayCount").innerHTML = dayCount ;
 
 
 					//document.write(song) ;
