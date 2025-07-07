@@ -38,8 +38,8 @@
 			bottom: 0;
 			left: 0;
 			right: 0;
-			background: #333333;
-			color: white;
+			background: #061C30;
+			color: #848d96;
 			padding: 20px;
 			text-align: center;
 			z-index: 10000;
@@ -66,14 +66,17 @@
 			flex: 1;
 			min-width: 300px;
 			text-align: left;
-			font-size: 14px;
-			line-height: 1.4;
+			font-family: 'Lora', serif;
+			font-size: 18px;
+			line-height: 1.6;
 		}
 		
 		.cookie-message h4 {
-			margin: 0 0 8px 0;
-			font-size: 16px;
-			color: white;
+			margin: 0 0 12px 0;
+			font-family: 'Montserrat', sans-serif;
+			font-size: 20px;
+			font-weight: 600;
+			color: #47bec7;
 		}
 		
 		.cookie-buttons {
@@ -83,42 +86,44 @@
 		}
 		
 		.cookie-btn {
-			padding: 10px 20px;
+			padding: 12px 24px;
 			border: none;
 			border-radius: 5px;
 			cursor: pointer;
-			font-size: 14px;
-			font-weight: bold;
+			font-family: 'Montserrat', sans-serif;
+			font-size: 16px;
+			font-weight: 600;
 			transition: all 0.2s ease;
 		}
 		
 		.cookie-btn.accept {
-			background: #4CAF50;
-			color: white;
+			background: #47bec7;
+			color: #061C30;
 		}
 		
 		.cookie-btn.accept:hover {
-			background: #45a049;
+			background: #5ac8d1;
 		}
 		
 		.cookie-btn.decline {
 			background: transparent;
-			color: white;
-			border: 2px solid #888;
+			color: #848d96;
+			border: 2px solid #848d96;
 		}
 		
 		.cookie-btn.decline:hover {
-			border-color: #bbb;
-			background: rgba(255, 255, 255, 0.1);
+			border-color: #47bec7;
+			color: #47bec7;
+			background: rgba(71, 190, 199, 0.1);
 		}
 		
 		.cookie-link {
-			color: #87CEEB;
+			color: #47bec7;
 			text-decoration: underline;
 		}
 		
 		.cookie-link:hover {
-			color: #B0E0E6;
+			color: #5ac8d1;
 		}
 		
 		@media (max-width: 768px) {
