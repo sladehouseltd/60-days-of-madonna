@@ -30,10 +30,174 @@
 	<!-- Styles -->
 	<link rel='stylesheet' href='assets/css/split.css' type='text/css' media='screen' />
 	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	
+	<!-- Cookie Consent Styles -->
+	<style>
+		#cookie-consent {
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			background: rgba(0, 0, 0, 0.95);
+			color: white;
+			padding: 20px;
+			text-align: center;
+			z-index: 10000;
+			box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+			transform: translateY(100%);
+			transition: transform 0.3s ease-in-out;
+		}
+		
+		#cookie-consent.show {
+			transform: translateY(0);
+		}
+		
+		.cookie-content {
+			max-width: 1200px;
+			margin: 0 auto;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			flex-wrap: wrap;
+			gap: 15px;
+		}
+		
+		.cookie-message {
+			flex: 1;
+			min-width: 300px;
+			text-align: left;
+			font-size: 14px;
+			line-height: 1.4;
+		}
+		
+		.cookie-message h4 {
+			margin: 0 0 8px 0;
+			font-size: 16px;
+			color: #ff6b9d;
+		}
+		
+		.cookie-buttons {
+			display: flex;
+			gap: 10px;
+			flex-wrap: wrap;
+		}
+		
+		.cookie-btn {
+			padding: 10px 20px;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			font-size: 14px;
+			font-weight: bold;
+			transition: all 0.2s ease;
+		}
+		
+		.cookie-btn.accept {
+			background: #ff6b9d;
+			color: white;
+		}
+		
+		.cookie-btn.accept:hover {
+			background: #e55a8a;
+		}
+		
+		.cookie-btn.decline {
+			background: transparent;
+			color: white;
+			border: 2px solid #666;
+		}
+		
+		.cookie-btn.decline:hover {
+			border-color: #999;
+			background: rgba(255, 255, 255, 0.1);
+		}
+		
+		.cookie-link {
+			color: #ff6b9d;
+			text-decoration: underline;
+		}
+		
+		.cookie-link:hover {
+			color: #e55a8a;
+		}
+		
+		@media (max-width: 768px) {
+			.cookie-content {
+				flex-direction: column;
+				text-align: center;
+			}
+			
+			.cookie-message {
+				text-align: center;
+				min-width: auto;
+			}
+			
+			.cookie-buttons {
+				justify-content: center;
+			}
+		}
+	</style>
 
 	<script type="text/javascript">
+	
+		// Cookie Consent Management
+		let cookieConsentGiven = false;
+		
+		function checkCookieConsent() {
+			// Check if user has already given consent
+			const consent = localStorage.getItem('cookieConsent');
+			if (consent === 'accepted') {
+				cookieConsentGiven = true;
+				return true;
+			} else if (consent === 'declined') {
+				cookieConsentGiven = false;
+				showDeclinedMessage();
+				return false;
+			}
+			// No consent given yet, show banner
+			showCookieBanner();
+			return false;
+		}
+		
+		function showCookieBanner() {
+			setTimeout(() => {
+				document.getElementById('cookie-consent').classList.add('show');
+			}, 1000); // Show after 1 second
+		}
+		
+		function acceptCookies() {
+			localStorage.setItem('cookieConsent', 'accepted');
+			cookieConsentGiven = true;
+			hideCookieBanner();
+			// Now load the song
+			getasong();
+		}
+		
+		function declineCookies() {
+			localStorage.setItem('cookieConsent', 'declined');
+			cookieConsentGiven = false;
+			hideCookieBanner();
+			showDeclinedMessage();
+		}
+		
+		function hideCookieBanner() {
+			document.getElementById('cookie-consent').classList.remove('show');
+		}
+		
+		function showDeclinedMessage() {
+			document.getElementById("newSong").innerHTML = "Welcome to 60 Days of Madonna!";
+			document.getElementById("songsSoFar").innerHTML = "To enjoy your daily Madonna song journey, please accept cookies to track your progress.";
+			document.getElementById("currentDayCount").innerHTML = "🍪";
+			document.getElementById("oldDayCount").innerHTML = "0";
+		}
 
 		function getasong () {
+		
+			// Don't make API call if cookies not accepted
+			if (!cookieConsentGiven) {
+				console.log("Cookies not accepted, not making API call");
+				return;
+			}
 		
 			var xhr = new XMLHttpRequest() ;
 			xhr.onreadystatechange = function() {
@@ -84,7 +248,10 @@
 
 <script type="text/javascript">
 	
-	getasong() ;
+	// Initialize page - check cookie consent first
+	if (checkCookieConsent()) {
+		getasong();
+	}
 
 </script>
 
@@ -143,6 +310,47 @@
 	</div>
 
 </div>
+
+<!-- Cookie Consent Banner -->
+<div id="cookie-consent">
+	<div class="cookie-content">
+		<div class="cookie-message">
+			<h4>🍪 We use cookies to enhance your experience</h4>
+			<p>This site uses essential cookies to track your daily Madonna song progress and remember which songs you've received. We don't share your data with third parties or use tracking cookies. <a href="#" class="cookie-link" onclick="showPrivacyInfo()">Learn more about our privacy practices</a>.</p>
+		</div>
+		<div class="cookie-buttons">
+			<button class="cookie-btn accept" onclick="acceptCookies()">Accept & Start Journey</button>
+			<button class="cookie-btn decline" onclick="declineCookies()">Decline</button>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+function showPrivacyInfo() {
+	alert(`Privacy Information:
+
+🍪 What cookies we use:
+- Essential cookies to remember your user ID
+- Session cookies to track your song progress
+- No advertising or tracking cookies
+
+📊 What data we collect:
+- A random user ID (no personal information)
+- Which songs you've received
+- Your current day count (1-60)
+
+🔒 Your privacy:
+- No personal data is collected
+- No data is shared with third parties
+- Data is stored securely in AWS
+- You can reset your progress anytime
+
+🌍 Your rights:
+- You can decline cookies (but the site won't work)
+- You can clear your data anytime by resetting
+- No account registration required`);
+}
+</script>
 
 </body>
 </html>
