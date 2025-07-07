@@ -19,7 +19,8 @@ class DecimalEncoder(json.JSONEncoder):
 def getEndpoint():
 
 	endpoint_url = ''
-	endpoint_url = "http://127.0.0.1:8000"
+	# Use AWS DynamoDB service instead of local endpoint
+	# endpoint_url = "http://127.0.0.1:8000"
 
 	return(endpoint_url)
 
