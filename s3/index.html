@@ -276,6 +276,13 @@
 		}
 
 		function resetUserProgress() {
+			// Get user ID from cookie
+			var userID = getUserIDFromCookie();
+			if (!userID) {
+				alert("Error: Unable to find your user ID. Please try again.");
+				return;
+			}
+
 			var xhr = new XMLHttpRequest();
 			xhr.onreadystatechange = function() {
 				if (xhr.readyState === 4) {
@@ -289,9 +296,24 @@
 				}
 			};
 
-			xhr.open("get", "https://api.60daysofmadonna.com/prod/madz_reset_my_songs", true);
+			xhr.open("get", "https://api.60daysofmadonna.com/prod/madz_reset_my_songs?user=" + encodeURIComponent(userID), true);
 			xhr.withCredentials = true;
 			xhr.send(null);
+		}
+
+		function getUserIDFromCookie() {
+			// Get all cookies
+			var cookies = document.cookie.split(';');
+			
+			// Find the madzCookie
+			for (var i = 0; i < cookies.length; i++) {
+				var cookie = cookies[i].trim();
+				if (cookie.startsWith('madzCookie=')) {
+					return cookie.substring('madzCookie='.length);
+				}
+			}
+			
+			return null;
 		}
 
 	</script>
