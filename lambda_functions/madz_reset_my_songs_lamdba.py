@@ -68,7 +68,9 @@ def lambda_handler(event, context):
     resp = {
         "statusCode": 200,
         "headers": {
-            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Origin": "https://60daysofmadonna.com",
+            "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+            "Access-Control-Allow-Credentials": "true"
         },
         "body": respMessage
     }
