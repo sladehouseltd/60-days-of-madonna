@@ -165,6 +165,7 @@
 	
 		// Cookie Consent Management
 		let cookieConsentGiven = false;
+		let currentUserID = null; // Store user ID from API response
 		
 		function checkCookieConsent() {
 			// Check if user has already given consent
@@ -242,6 +243,12 @@
 
 					var oldDayCount = currentDayCount - 1 ;
 
+					// Store user ID from API response
+					if (response["droppedUserCookie"]) {
+						currentUserID = response["droppedUserCookie"];
+						console.log("Stored user ID from API:", currentUserID);
+					}
+
 					document.getElementById("newSong").innerHTML = song ;
  
 					document.getElementById("songsSoFar").innerHTML = songsSoFar ;
@@ -276,8 +283,13 @@
 		}
 
 		function resetUserProgress() {
-			// Get user ID from cookie
+			// Get user ID from cookie first, then try stored ID
 			var userID = getUserIDFromCookie();
+			if (!userID && currentUserID) {
+				userID = currentUserID;
+				console.log("Using stored user ID:", userID);
+			}
+			
 			if (!userID) {
 				alert("Error: Unable to find your user ID. Please try again.");
 				return;
