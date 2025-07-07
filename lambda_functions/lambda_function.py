@@ -423,7 +423,7 @@ def lambda_handler(event, context):
         userCookie = userCookie.lstrip()
         #print(userCookie)
 
-    userCookieString = "madzCookie=" + userCookie +"; domain=60daysofmadonna.com; expires=Wed, 19 Apr 2020 20:41:27 GMT;"
+    userCookieString = "madzCookie=" + userCookie +"; domain=60daysofmadonna.com; expires=Wed, 19 Apr 2030 20:41:27 GMT;"
 
     global globalUserItem
 

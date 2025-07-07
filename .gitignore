@@ -1,0 +1,114 @@
+# AWS Credentials and Config
+.aws/
+aws-credentials.json
+credentials.csv
+config.json
+
+# Production Configuration (contains account IDs)
+config/MadzServerless-API-prod-swagger-apigateway.json
+config/MadzServerless-API-prod-swagger-postman.json
+
+# Environment Variables
+.env
+.env.local
+.env.production
+
+# AWS Deployment Artifacts
+*.zip
+lambda_function.zip
+deployment-package.zip
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary Files
+/tmp/
+*.tmp
+*.temp
+test_cookies.txt
+https_cookies.txt
+cookies.txt
+
+# Backup Files
+*.bak
+*.backup
+*.old
+
+# Local Development
+local_test/
+test_data/
+mock_data/
+
+# CloudFormation
+cloudformation-packaged.yaml
+.sam/
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# CDK
+cdk.out/
+*.d.ts
+
+# Node.js (if using for local development)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Personal Notes
+notes.txt
+todo.txt
+private_notes/
