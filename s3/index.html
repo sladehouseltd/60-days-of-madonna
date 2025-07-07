@@ -305,14 +305,22 @@
 			// Get all cookies
 			var cookies = document.cookie.split(';');
 			
+			// Debug: log all cookies
+			console.log("All cookies:", document.cookie);
+			console.log("Cookies array:", cookies);
+			
 			// Find the madzCookie
 			for (var i = 0; i < cookies.length; i++) {
 				var cookie = cookies[i].trim();
+				console.log("Checking cookie:", cookie);
 				if (cookie.startsWith('madzCookie=')) {
-					return cookie.substring('madzCookie='.length);
+					var userID = cookie.substring('madzCookie='.length);
+					console.log("Found user ID:", userID);
+					return userID;
 				}
 			}
 			
+			console.log("No madzCookie found");
 			return null;
 		}
 
